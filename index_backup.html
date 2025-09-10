@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Livestock Health Monitoring System Architecture</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        h1, h2 {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .diagram-container {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .description {
+            color: #94a3b8;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        .spec-list {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        .spec-list ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .spec-list li {
+            margin: 8px 0;
+            color: #cbd5e1;
+        }
+        .spec-list strong {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Livestock Health Monitoring System</h1>
+    
+    <div class="diagram-container">
+        <h2>1. System Overview Architecture</h2>
+        <p class="description">Complete system showing signal flow from camera input through edge AI processing to alert generation.</p>
+        <div class="mermaid">
+            graph TB
+                subgraph "Data Acquisition Layer"
+                    CAM[USB Webcam<br/>1080p@30fps]
+                    ULTRA[Ultrasonic Sensor<br/>HC-SR04]
+                    ENV[Environmental Sensors<br/>Temperature/Humidity]
+                end
+                
+                subgraph "Edge AI Processing - Jetson Orin Nano"
+                    PREP[Image Preprocessing<br/>OpenCV]
+                    AI[AI Vision Engine<br/>TensorRT Optimized]
+                    TRACK[Animal Tracking<br/>DeepSORT Algorithm]
+                    ANALYTICS[Health Analytics<br/>Behavioral Analysis]
+                end
+                
+                subgraph "Data Management"
+                    DB[(Local SQLite<br/>Detection Records)]
+                    LOG[Event Logger<br/>JSON Format]
+                    METRICS[Performance Metrics<br/>FPS/Memory/Power]
+                end
+                
+                subgraph "User Interface"
+                    DASH[Web Dashboard<br/>Flask/React]
+                    ALERT[Alert System<br/>Email/SMS Simulation]
+                    VIS[Live Video Stream<br/>WebRTC]
+                end
+                
+                CAM -->|RGB Frames| PREP
+                ULTRA -->|Distance Data| ANALYTICS
+                ENV -->|Sensor Data| ANALYTICS
+                PREP -->|Preprocessed Images| AI
+                AI -->|Detection Results| TRACK
+                TRACK -->|Animal IDs & Positions| ANALYTICS
+                ANALYTICS -->|Health Status| DB
+                ANALYTICS -->|Anomaly Events| LOG
+                AI -->|Performance Data| METRICS
+                DB -->|Historical Data| DASH
+                LOG -->|Alert Triggers| ALERT
+                PREP -->|Live Feed| VIS
+                DASH -->|User Commands| AI
+                
+                style CAM fill:#10b981,stroke:#34d399,color:#fff
+                style AI fill:#3b82f6,stroke:#60a5fa,color:#fff
+                style DASH fill:#8b5cf6,stroke:#a78bfa,color:#fff
+        </div>
+    </div>
+    
+    <div class="diagram-container">
+        <h2>2. AI Vision Pipeline Detail</h2>
+        <p class="description">Detailed view of the computer vision processing pipeline with model optimization stages.</p>
+        <div class="mermaid">
+            graph LR
+                subgraph "Input Processing"
+                    INPUT[Camera Frame<br/>1920x1080x3]
+                    RESIZE[Resize & Crop<br/>640x640x3]
+                    NORM[Normalization<br/>0-1 Range]
+                end
+                
+                subgraph "AI Model Pipeline"
+                    DETECT[YOLOv8n Detection<br/>Livestock Objects]
+                    CLASSIFY[Behavior Classification<br/>Eating/Resting/Moving]
+                    POSE[Simple Pose Estimation<br/>Body Orientation]
+                end
+                
+                subgraph "Post-Processing"
+                    NMS[Non-Max Suppression<br/>Confidence > 0.5]
+                    TRACK2[Multi-Object Tracking<br/>DeepSORT]
+                    HEALTH[Health Assessment<br/>Rule-based Logic]
+                end
+                
+                subgraph "Optimization"
+                    FP32[Original Model<br/>FP32 Weights]
+                    QUANT[INT8 Quantization<br/>TensorRT]
+                    PRUNE[Model Pruning<br/>50% Sparsity]
+                    ENGINE[TensorRT Engine<br/>Optimized Runtime]
+                end
+                
+                INPUT --> RESIZE
+                RESIZE --> NORM
+                NORM --> DETECT
+                DETECT --> CLASSIFY
+                CLASSIFY --> POSE
+                POSE --> NMS
+                NMS --> TRACK2
+                TRACK2 --> HEALTH
+                
+                FP32 --> QUANT
+                QUANT --> PRUNE
+                PRUNE --> ENGINE
+                ENGINE -.->|Powers| DETECT
+                
+                style DETECT fill:#f59e0b,stroke:#fbbf24,color:#fff
+                style ENGINE fill:#dc2626,stroke:#ef4444,color:#fff
+        </div>
+        <div class="spec-list">
+            <strong>Model Specifications:</strong>
+            <ul>
+                <li><strong>Base Model:</strong> YOLOv8n (3.2M parameters)</li>
+                <li><strong>Input Size:</strong> 640x640x3 RGB images</li>
+                <li><strong>Target FPS:</strong> 15-20 on Jetson Orin Nano</li>
+                <li><strong>Optimization:</strong> INT8 quantization + 50% pruning</li>
+                <li><strong>Memory Usage:</strong> <2GB GPU memory</li>
+                <li><strong>Classes:</strong> Cow, Pig, Sheep, Background</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="diagram-container">
+        <h2>3. Data Flow and Processing Sequence</h2>
+        <p class="description">Temporal sequence showing how data flows through the system from capture to decision making.</p>
+        <div class="mermaid">
+            sequenceDiagram
+                participant Camera as USB Camera
+                participant Jetson as Jetson Orin Nano
+                participant Model as AI Model
+                participant Tracker as Object Tracker
+                participant Health as Health Monitor
+                participant DB as Database
+                participant UI as Web Interface
+                participant Alert as Alert System
+                
+                Camera->>Jetson: RGB Frame (33ms)
+                Jetson->>Model: Preprocessed Image
+                Model->>Model: TensorRT Inference (50ms)
+                Model->>Tracker: Detection Results
+                Tracker->>Tracker: Update Animal Tracks
+                Tracker->>Health: Animal Positions & Behaviors
+                Health->>Health: Analyze Health Patterns
+                Health->>DB: Store Detection Records
+                Health->>Alert: Check Anomaly Conditions
+                Alert-->>UI: Send Alert (if triggered)
+                DB->>UI: Historical Data Query
+                UI->>Camera: Live Video Stream
+                
+                Note over Camera,Alert: Processing Cycle: ~83ms (12 FPS)
+        </div>
+    </div>
+    
+    <div class="diagram-container">
+        <h2>4. System Components and Interfaces</h2>
+        <p class="description">Physical and logical components showing input/output relationships and communication protocols.</p>
+        <div class="mermaid">
+            graph TD
+                subgraph "Hardware Components"
+                    JETSON[NVIDIA Jetson Orin Nano<br/>8GB RAM, 1024 CUDA Cores]
+                    USB_CAM[USB 3.0 Webcam<br/>Logitech C920/C930e]
+                    ULTRA_SENS[HC-SR04 Ultrasonic<br/>GPIO Pins 11,13]
+                    TEMP_SENS[DHT22 Sensor<br/>GPIO Pin 15]
+                end
+                
+                subgraph "Software Stack"
+                    JETPACK[JetPack 5.1<br/>Ubuntu 20.04]
+                    PYTORCH[PyTorch 2.0<br/>CUDA Support]
+                    TENSORRT[TensorRT 8.6<br/>Inference Engine]
+                    OPENCV[OpenCV 4.8<br/>Computer Vision]
+                end
+                
+                subgraph "Application Layer"
+                    MAIN[Main Controller<br/>Python 3.8]
+                    FLASK[Flask Web Server<br/>Port 5000]
+                    SQLITE[SQLite Database<br/>detection_logs.db]
+                    CONFIG[YAML Configuration<br/>model_config.yaml]
+                end
+                
+                USB_CAM -->|USB 3.0| JETSON
+                ULTRA_SENS -->|GPIO| JETSON
+                TEMP_SENS -->|GPIO| JETSON
+                JETSON --> JETPACK
+                JETPACK --> PYTORCH
+                JETPACK --> TENSORRT
+                JETPACK --> OPENCV
+                PYTORCH --> MAIN
+                TENSORRT --> MAIN
+                OPENCV --> MAIN
+                MAIN --> FLASK
+                MAIN --> SQLITE
+                CONFIG --> MAIN
+                
+                style JETSON fill:#76b900,stroke:#91d400,color:#fff
+                style TENSORRT fill:#ff6b35,stroke:#ff8c42,color:#fff
+        </div>
+        <div class="spec-list">
+            <strong>Interface Specifications:</strong>
+            <ul>
+                <li><strong>Camera Input:</strong> USB 3.0, 1920x1080@30fps, MJPEG format</li>
+                <li><strong>Ultrasonic Sensor:</strong> GPIO pins, 5V trigger, 3.3V echo</li>
+                <li><strong>Temperature Sensor:</strong> DHT22 via GPIO, 1-wire protocol</li>
+                <li><strong>Web Interface:</strong> HTTP REST API, WebSocket for live video</li>
+                <li><strong>Database:</strong> SQLite with 10,000 record rotation</li>
+                <li><strong>Configuration:</strong> YAML files for model parameters</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="diagram-container">
+        <h2>5. Performance Monitoring Dashboard</h2>
+        <p class="description">Real-time performance metrics and system health monitoring interface.</p>
+        <div class="mermaid">
+            graph LR
+                subgraph "System Metrics"
+                    CPU[CPU Usage<br/>ARM Cortex-A78AE]
+                    GPU[GPU Utilization<br/>1024 CUDA Cores]
+                    MEM[Memory Usage<br/>8GB LPDDR5]
+                    TEMP[Temperature<br/>CPU/GPU/Board]
+                    POWER[Power Consumption<br/>10-25W Range]
+                end
+                
+                subgraph "AI Performance"
+                    FPS[Inference FPS<br/>Target: 15+ fps]
+                    LATENCY[Processing Latency<br/>Target: <70ms]
+                    ACCURACY[Detection Accuracy<br/>mAP Score]
+                    THROUGHPUT[Data Throughput<br/>MB/s processed]
+                end
+                
+                subgraph "Application Metrics"
+                    DETECTS[Animals Detected<br/>Current Count]
+                    ALERTS[Alerts Generated<br/>Last 24h]
+                    UPTIME[System Uptime<br/>Hours Online]
+                    ERRORS[Error Rate<br/>Failed Detections]
+                end
+                
+                CPU --> FPS
+                GPU --> LATENCY
+                MEM --> ACCURACY
+                TEMP --> THROUGHPUT
+                POWER --> DETECTS
+                FPS --> ALERTS
+                LATENCY --> UPTIME
+                ACCURACY --> ERRORS
+                
+                style FPS fill:#10b981,stroke:#34d399,color:#fff
+                style LATENCY fill:#f59e0b,stroke:#fbbf24,color:#fff
+                style TEMP fill:#dc2626,stroke:#ef4444,color:#fff
+        </div>
+    </div>
+    
+    <div class="diagram-container">
+        <h2>6. Alert and Response System</h2>
+        <p class="description">Decision tree for health anomaly detection and automated response generation.</p>
+        <div class="mermaid">
+            flowchart TD
+                START([Animal Detected])
+                TRACK{Tracking<br/>Successful?}
+                BEHAVE{Normal<br/>Behavior?}
+                ISOLATE{Animal<br/>Isolated?}
+                DURATION{Abnormal<br/>Duration > 5min?}
+                
+                ALERT1[Generate Alert:<br/>Lost Animal]
+                ALERT2[Generate Alert:<br/>Behavioral Anomaly]
+                ALERT3[Generate Alert:<br/>Isolation Detected]
+                ALERT4[Generate Alert:<br/>Persistent Issue]
+                
+                LOG[Log Normal<br/>Behavior]
+                EMAIL[Send Email<br/>Notification]
+                SMS[SMS Alert<br/>(Simulated)]
+                DASHBOARD[Update Dashboard<br/>Real-time Display]
+                
+                START --> TRACK
+                TRACK -->|No| ALERT1
+                TRACK -->|Yes| BEHAVE
+                BEHAVE -->|No| ISOLATE
+                BEHAVE -->|Yes| LOG
+                ISOLATE -->|Yes| ALERT3
+                ISOLATE -->|No| DURATION
+                DURATION -->|Yes| ALERT4
+                DURATION -->|No| ALERT2
+                
+                ALERT1 --> EMAIL
+                ALERT2 --> SMS
+                ALERT3 --> EMAIL
+                ALERT4 --> SMS
+                EMAIL --> DASHBOARD
+                SMS --> DASHBOARD
+                LOG --> DASHBOARD
+                
+                style START fill:#10b981,stroke:#34d399,color:#fff
+                style ALERT1 fill:#dc2626,stroke:#ef4444,color:#fff
+                style ALERT2 fill:#f59e0b,stroke:#fbbf24,color:#fff
+                style ALERT3 fill:#dc2626,stroke:#ef4444,color:#fff
+                style ALERT4 fill:#7c2d12,stroke:#dc2626,color:#fff
+        </div>
+        <div class="spec-list">
+            <strong>Alert Conditions:</strong>
+            <ul>
+                <li><strong>Lost Tracking:</strong> Animal disappears for >30 seconds</li>
+                <li><strong>Behavioral Anomaly:</strong> Unusual posture or movement pattern</li>
+                <li><strong>Isolation:</strong> Animal separated from group for >2 minutes</li>
+                <li><strong>Persistent Issues:</strong> Continuous abnormal behavior >5 minutes</li>
+                <li><strong>System Alerts:</strong> Model confidence <40% or processing delays</li>
+                <li><strong>Hardware Alerts:</strong> Temperature >85°C or memory usage >90%</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#60a5fa',
+                lineColor: '#60a5fa',
+                secondaryColor: '#8b5cf6',
+                tertiaryColor: '#06b6d4',
+                background: '#1e293b',
+                mainBkg: '#0f172a',
+                secondBkg: '#1e293b',
+                tertiaryBkg: '#334155',
+                primaryBorderColor: '#3b82f6',
+                secondaryBorderColor: '#8b5cf6',
+                tertiaryBorderColor: '#06b6d4',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '14px',
+                darkMode: true
+            }
+        });
+    </script>
+</body>
+</html>
