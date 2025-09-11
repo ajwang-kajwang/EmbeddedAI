@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplified Livestock Monitoring - Lab Deployment Focus</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        h1, h2, h3 {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.4em;
+            margin-top: 25px;
+            color: #60a5fa;
+        }
+        .section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .description {
+            color: #94a3b8;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        .challenge-box {
+            background: rgba(220, 38, 38, 0.1);
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        .solution-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        .module-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .module-card h4 {
+            color: #a78bfa;
+            margin-top: 0;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-item {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.8em;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        .metric-label {
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        th {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+        .owner-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        .code-block {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simplified Livestock Monitoring System</h1>
+    <p style="text-align: center; color: #94a3b8;">Lab-Ready Deployment on Jetson Nano with Pretrained Models</p>
+    
+    <div class="section">
+        <h2>1. Project Scope & Lab Constraints</h2>
+        <p class="description">
+            Simplified livestock monitoring proof-of-concept focusing on deployment pipelines using available lab resources.
+        </p>
+        
+        <div class="mermaid">
+            graph TD
+                subgraph "Available Resources"
+                    HW1[Jetson Nano 4GB]
+                    HW2[USB Webcam<br/>720p/1080p]
+                    HW3[Basic Sensors<br/>HC-SR04, DHT22]
+                    HW4[Power Supply<br/>5V 4A]
+                end
+                
+                subgraph "Software Stack"
+                    SW1[JetPack 4.6]
+                    SW2[Pretrained YOLOv5s<br/>From Roboflow]
+                    SW3[OpenCV 4.5]
+                    SW4[Flask Server]
+                end
+                
+                subgraph "Simplified Goals"
+                    G1[Animal Detection<br/>3-5 FPS]
+                    G2[Basic Tracking]
+                    G3[Simple Alerts]
+                    G4[Web Dashboard]
+                end
+                
+                HW1 --> SW1
+                HW2 --> SW3
+                HW3 --> G3
+                SW2 --> G1
+                SW3 --> G2
+                SW4 --> G4
+                
+                style HW1 fill:#10b981
+                style SW2 fill:#3b82f6
+                style G1 fill:#f59e0b
+        </div>
+        
+        <div class="challenge-box">
+            <strong>Lab Environment Constraints:</strong>
+            <ul>
+                <li>Jetson Nano: 128 CUDA cores, 4GB RAM (vs Orin's 1024 cores, 8GB)</li>
+                <li>Power limit: 10W mode for stability</li>
+                <li>No cloud connectivity required</li>
+                <li>Single camera setup</li>
+                <li>Simulated livestock using video files or toy animals</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Simplified Problem Statement</h2>
+        <div class="solution-box">
+            <strong>Demonstration Goals:</strong>
+            <ul>
+                <li>✓ Deploy pretrained model on Jetson Nano</li>
+                <li>✓ Achieve real-time inference (3-5 FPS)</li>
+                <li>✓ Basic object tracking between frames</li>
+                <li>✓ Simple sensor integration for environmental data</li>
+                <li>✓ Local web interface for monitoring</li>
+                <li>✓ Demonstrate edge AI deployment pipeline</li>
+            </ul>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-value">3-5</div>
+                <div class="metric-label">Target FPS</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">10W</div>
+                <div class="metric-label">Power Budget</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">4</div>
+                <div class="metric-label">Core Modules</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">2-3</div>
+                <div class="metric-label">Week Timeline</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Simplified 4-Module Architecture</h2>
+        <p class="description">
+            Four core modules that can be developed and tested independently in the lab environment.
+        </p>
+        
+        <div class="mermaid">
+            graph TB
+                subgraph "Core Pipeline Modules"
+                    M1[Module 1<br/>Camera Interface<br/>& Preprocessing]
+                    M2[Module 2<br/>Model Inference<br/>Pipeline]
+                    M3[Module 3<br/>Post-Processing<br/>& Tracking]
+                    M4[Module 4<br/>Web Interface<br/>& Visualization]
+                end
+                
+                CAM[USB Camera] --> M1
+                M1 --> M2
+                M2 --> M3
+                M3 --> M4
+                M4 --> DISPLAY[Browser Display]
+                
+                SENSOR[Optional Sensors] -.-> M4
+                
+                style M1 fill:#10b981
+                style M2 fill:#3b82f6
+                style M3 fill:#f59e0b
+                style M4 fill:#8b5cf6
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Module 1: Camera Interface & Preprocessing</h2>
+        <div class="module-card">
+            <h4>Simple Camera Capture Pipeline</h4>
+            <div class="mermaid">
+                flowchart LR
+                    USB[USB Camera] --> CV[OpenCV Capture]
+                    CV --> RESIZE[Resize to 416x416]
+                    RESIZE --> CONVERT[BGR to RGB]
+                    CONVERT --> NORM[Normalize 0-255]
+                    NORM --> QUEUE[Frame Queue<br/>Max 5 frames]
+                    
+                    style USB fill:#10b981
+                    style QUEUE fill:#3b82f6
+            </div>
+            
+            <div class="code-block">
+                Key Implementation:
+                - cv2.VideoCapture(0) for USB camera
+                - Resolution: 640x480 (lower for better FPS)
+                - Frame skip: Process every 2nd frame
+                - Threading for non-blocking capture
+                - Memory limit: <200MB
+            </div>
+            
+            <ul>
+                <li><strong>Input:</strong> USB webcam stream</li>
+                <li><strong>Output:</strong> Preprocessed frames ready for inference</li>
+                <li><strong>Performance:</strong> 15-30 FPS capture, 10ms preprocessing</li>
+                <li><strong>Testing:</strong> Can use video file for consistent testing</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Module 2: Model Inference Pipeline</h2>
+        <div class="module-card">
+            <h4>Pretrained Model Deployment</h4>
+            <div class="mermaid">
+                flowchart LR
+                    MODEL[Pretrained YOLOv5s<br/>From Roboflow]
+                    MODEL --> CONVERT[Export to ONNX]
+                    CONVERT --> TRT[TensorRT Conversion<br/>FP16 mode]
+                    TRT --> ENGINE[TRT Engine<br/>~20MB]
+                    
+                    FRAME[Input Frame] --> ENGINE
+                    ENGINE --> DET[Detections<br/>Boxes + Classes]
+                    
+                    style MODEL fill:#3b82f6
+                    style ENGINE fill:#10b981
+            </div>
+            
+            <div class="code-block">
+                Model Sources:
+                - Roboflow Universe: "livestock-detection" models
+                - YOLOv5s pretrained on animals (cows, pigs, sheep)
+                - Download .pt file → Convert to .onnx → TensorRT
+                - Inference time target: 200-300ms per frame
+            </div>
+            
+            <ul>
+                <li><strong>Model:</strong> YOLOv5s (smallest version, 7.2M parameters)</li>
+                <li><strong>Optimization:</strong> TensorRT FP16 (FP32 fallback if needed)</li>
+                <li><strong>Classes:</strong> Person, Cow, Sheep, Pig (or simulate with objects)</li>
+                <li><strong>Batch Size:</strong> 1 (due to memory constraints)</li>
+                <li><strong>GPU Memory:</strong> <1GB allocated</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>6. Module 3: Post-Processing & Simple Tracking</h2>
+        <div class="module-card">
+            <h4>Basic Object Tracking</h4>
+            <div class="mermaid">
+                flowchart LR
+                    DET[Raw Detections] --> NMS[Non-Max Suppression<br/>Threshold: 0.5]
+                    NMS --> TRACK[Simple Centroid Tracker]
+                    TRACK --> ASSIGN[ID Assignment<br/>IoU matching]
+                    ASSIGN --> COUNT[Object Counter]
+                    COUNT --> LOG[Detection Log<br/>CSV file]
+                    
+                    style NMS fill:#f59e0b
+                    style TRACK fill:#10b981
+            </div>
+            
+            <div class="code-block">
+                Tracking Algorithm:
+                - Simple centroid tracking (no deep features)
+                - IoU-based matching between frames
+                - Maximum 10 tracked objects
+                - Track lost after 5 frames missing
+                - No complex ReID needed for demo
+            </div>
+            
+            <ul>
+                <li><strong>Algorithm:</strong> Centroid tracking with IoU matching</li>
+                <li><strong>Max Objects:</strong> 10 simultaneous tracks</li>
+                <li><strong>Processing:</strong> <10ms per frame</li>
+                <li><strong>Output:</strong> Tracked objects with consistent IDs</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>7. Module 4: Django Web Interface & Visualization</h2>
+        <div class="module-card">
+            <h4>Django-Based Dashboard Architecture</h4>
+            <div class="mermaid">
+                flowchart TB
+                    subgraph "Django Backend Architecture"
+                        DJANGO[Django Server<br/>Port 8000]
+                        MODELS[Data Models<br/>Detection, Animal, Metrics]
+                        VIEWS[View Controllers<br/>CBV & FBV]
+                        URLS[URL Routing<br/>API & Pages]
+                        CHANNELS[Django Channels<br/>WebSocket Support]
+                        ORM[Django ORM<br/>Database Layer]
+                    end
+                    
+                    subgraph "Frontend Components"
+                        TEMPLATES[Template Engine<br/>Django Templates]
+                        BOOTSTRAP[Bootstrap 5<br/>UI Framework]
+                        JS[JavaScript<br/>Dynamic Updates]
+                        CHARTJS[Chart.js<br/>Data Visualization]
+                        CSS[Custom CSS<br/>Dark Theme]
+                    end
+                    
+                    subgraph "Data Flow"
+                        STREAM[Video Stream<br/>MJPEG]
+                        API[REST API<br/>JSON Data]
+                        WS[WebSocket<br/>Real-time Updates]
+                        STATIC[Static Files<br/>CSS/JS/Images]
+                    end
+                    
+                    DJANGO --> MODELS
+                    MODELS --> ORM
+                    ORM --> VIEWS
+                    VIEWS --> URLS
+                    URLS --> TEMPLATES
+                    
+                    CHANNELS --> WS
+                    WS --> JS
+                    API --> JS
+                    STREAM --> TEMPLATES
+                    
+                    TEMPLATES --> BOOTSTRAP
+                    JS --> CHARTJS
+                    BOOTSTRAP --> CSS
+                    
+                    style DJANGO fill:#092e20
+                    style TEMPLATES fill:#44b78b
+                    style BOOTSTRAP fill:#7952b3
+                    style WS fill:#f59e0b
+            </div>
+            
+            <h4 style="margin-top: 20px;">Frontend Layout Architecture</h4>
+            <div class="mermaid">
+                graph TD
+                    subgraph "Page Structure"
+                        HEADER[Navigation Bar<br/>System Status Indicators]
+                        MAIN[Main Content Area<br/>Responsive Grid Layout]
+                        SIDEBAR[Control Sidebar<br/>Stats & Actions]
+                        FOOTER[Footer Bar<br/>Performance Metrics]
+                    end
+                    
+                    subgraph "Primary Components"
+                        VIDEO[Live Video Feed<br/>Canvas Overlay for Detections]
+                        STATS[Statistics Dashboard<br/>Real-time Metrics Cards]
+                        CHART[Analytics Charts<br/>Historical Trends]
+                        TABLE[Detection Log<br/>Scrollable Event List]
+                        ALERTS[Alert Center<br/>Priority Notifications]
+                    end
+                    
+                    subgraph "Interactive Elements"
+                        CONTROLS[Control Panel<br/>Start/Stop/Configure]
+                        MODAL[Settings Modal<br/>System Configuration]
+                        TOAST[Toast Notifications<br/>Real-time Feedback]
+                        FILTERS[Data Filters<br/>Time Range/Class]
+                    end
+                    
+                    HEADER --> MAIN
+                    MAIN --> VIDEO
+                    MAIN --> SIDEBAR
+                    SIDEBAR --> STATS
+                    SIDEBAR --> CONTROLS
+                    MAIN --> CHART
+                    MAIN --> TABLE
+                    HEADER --> ALERTS
+                    ALERTS --> TOAST
+                    CONTROLS --> MODAL
+                    TABLE --> FILTERS
+                    MAIN --> FOOTER
+                    
+                    style VIDEO fill:#3b82f6
+                    style STATS fill:#10b981
+                    style ALERTS fill:#dc2626
+            </div>
+            
+            <h4 style="margin-top: 20px;">Data Model Design</h4>
+            <div class="mermaid">
+                erDiagram
+                    Detection {
+                        int id PK
+                        datetime timestamp
+                        int frame_number
+                        float confidence
+                        string class_name
+                        int bbox_x1
+                        int bbox_y1
+                        int bbox_x2
+                        int bbox_y2
+                    }
+                    
+                    TrackedAnimal {
+                        int id PK
+                        int track_id UK
+                        datetime first_seen
+                        datetime last_seen
+                        int total_detections
+                        float avg_confidence
+                        string status
+                    }
+                    
+                    SystemMetrics {
+                        int id PK
+                        datetime timestamp
+                        float fps
+                        float gpu_usage
+                        float memory_usage
+                        float temperature
+                        float inference_time
+                    }
+                    
+                    Alert {
+                        int id PK
+                        datetime created_at
+                        string alert_type
+                        string severity
+                        string message
+                        boolean acknowledged
+                    }
+                    
+                    Detection ||--o{ TrackedAnimal : "belongs to"
+                    SystemMetrics ||--o{ Alert : "triggers"
+            </div>
+            
+            <h4 style="margin-top: 20px;">API Endpoint Structure</h4>
+            <div class="solution-box">
+                <strong>RESTful API Design:</strong>
+                <ul>
+                    <li><strong>GET /api/detections/</strong> - Retrieve detection history with pagination</li>
+                    <li><strong>GET /api/stats/</strong> - Current system statistics and metrics</li>
+                    <li><strong>GET /api/stream/</strong> - MJPEG video stream with overlay</li>
+                    <li><strong>GET /api/sensors/</strong> - Environmental sensor readings</li>
+                    <li><strong>POST /api/config/</strong> - Update system configuration</li>
+                    <li><strong>WebSocket /ws/monitoring/</strong> - Real-time bidirectional updates</li>
+                </ul>
+            </div>
+            
+            <h4 style="margin-top: 20px;">Frontend Technology Stack</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Technology</th>
+                        <th>Purpose</th>
+                        <th>Optimization</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>UI Framework</td>
+                        <td>Bootstrap 5</td>
+                        <td>Responsive grid, components</td>
+                        <td>CDN delivery, tree-shaking</td>
+                    </tr>
+                    <tr>
+                        <td>Charts</td>
+                        <td>Chart.js</td>
+                        <td>Real-time data visualization</td>
+                        <td>Canvas rendering, data decimation</td>
+                    </tr>
+                    <tr>
+                        <td>Video Stream</td>
+                        <td>MJPEG over HTTP</td>
+                        <td>Live camera feed</td>
+                        <td>Hardware decoding, buffering</td>
+                    </tr>
+                    <tr>
+                        <td>Real-time Updates</td>
+                        <td>WebSocket + AJAX</td>
+                        <td>Bi-directional communication</td>
+                        <td>Connection pooling, compression</td>
+                    </tr>
+                    <tr>
+                        <td>State Management</td>
+                        <td>Vanilla JavaScript</td>
+                        <td>UI state handling</td>
+                        <td>Event delegation, debouncing</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4 style="margin-top: 20px;">Performance Optimizations for Jetson Nano</h4>
+            <div class="challenge-box">
+                <strong>Frontend Optimizations:</strong>
+                <ul>
+                    <li>Lazy loading of images and charts</li>
+                    <li>Virtual scrolling for large detection logs</li>
+                    <li>Debounced API calls (max 2/second)</li>
+                    <li>Client-side caching of static data</li>
+                    <li>Progressive rendering of UI components</li>
+                </ul>
+                
+                <strong>Backend Optimizations:</strong>
+                <ul>
+                    <li>Database query optimization with select_related()</li>
+                    <li>Redis caching for frequently accessed data</li>
+                    <li>Async views for non-blocking operations</li>
+                    <li>Connection pooling for database</li>
+                    <li>Static file compression and minification</li>
+                </ul>
+            </div>
+            
+            <h4 style="margin-top: 20px;">User Interface Design Principles</h4>
+            <div class="mermaid">
+                graph LR
+                    subgraph "Visual Hierarchy"
+                        PRIMARY[Video Feed<br/>60% Screen Space]
+                        SECONDARY[Statistics<br/>25% Screen Space]
+                        TERTIARY[Controls<br/>15% Screen Space]
+                    end
+                    
+                    subgraph "Color Scheme"
+                        BG[Dark Background<br/>#0f172a]
+                        ACCENT1[Primary Blue<br/>#3b82f6]
+                        ACCENT2[Success Green<br/>#10b981]
+                        ALERT_COLOR[Danger Red<br/>#dc2626]
+                    end
+                    
+                    subgraph "Responsive Breakpoints"
+                        MOBILE[Mobile<br/>< 768px]
+                        TABLET[Tablet<br/>768px - 1024px]
+                        DESKTOP[Desktop<br/>> 1024px]
+                    end
+                    
+                    PRIMARY --> ACCENT1
+                    SECONDARY --> ACCENT2
+                    TERTIARY --> BG
+                    
+                    MOBILE --> PRIMARY
+                    TABLET --> SECONDARY
+                    DESKTOP --> TERTIARY
+                    
+                    style PRIMARY fill:#3b82f6
+                    style ACCENT2 fill:#10b981
+                    style ALERT_COLOR fill:#dc2626
+            </div>
+            
+            <h4 style="margin-top: 20px;">Real-time Data Flow</h4>
+            <div class="mermaid">
+                sequenceDiagram
+                    participant Browser
+                    participant Django
+                    participant WebSocket
+                    participant Inference
+                    participant Database
+                    
+                    Browser->>Django: Request Dashboard
+                    Django->>Browser: Render Template
+                    Browser->>WebSocket: Establish Connection
+                    WebSocket->>Browser: Connection Confirmed
+                    
+                    loop Every 500ms
+                        Inference->>Database: Save Detection
+                        Database->>WebSocket: Trigger Update
+                        WebSocket->>Browser: Push Data
+                        Browser->>Browser: Update UI
+                    end
+                    
+                    Browser->>Django: Request Video Stream
+                    Django->>Browser: MJPEG Stream
+                    
+                    Note over Browser,Database: Fallback to AJAX polling if WebSocket fails
+            </div>
+            
+            <h4 style="margin-top: 20px;">Deployment Configuration</h4>
+            <div class="solution-box">
+                <strong>Django Settings for Production:</strong>
+                <ul>
+                    <li><strong>Database:</strong> SQLite with WAL mode for concurrent access</li>
+                    <li><strong>Static Files:</strong> WhiteNoise for serving without nginx</li>
+                    <li><strong>Security:</strong> CSRF protection, secure cookies (optional for lab)</li>
+                    <li><strong>Caching:</strong> Local memory cache for session data</li>
+                    <li><strong>Logging:</strong> Rotating file handler with 10MB limit</li>
+                    <li><strong>Debug:</strong> Disabled in production, Django Debug Toolbar for development</li>
+                </ul>
+                
+                <strong>Scalability Considerations:</strong>
+                <ul>
+                    <li>Database migrations for schema updates</li>
+                    <li>Modular app structure for feature additions</li>
+                    <li>API versioning for backward compatibility</li>
+                    <li>Containerization-ready with Docker support</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+            
+       
+    
+    <div class="section">
+        <h2>8. Deployment Pipeline</h2>
+        <div class="mermaid">
+            flowchart TD
+                subgraph "Step 1: Environment Setup"
+                    S1A[Flash JetPack 4.6]
+                    S1B[Install Dependencies<br/>OpenCV, Flask, PyTorch]
+                    S1C[Configure CUDA]
+                end
+                
+                subgraph "Step 2: Model Preparation"
+                    S2A[Download from Roboflow]
+                    S2B[Convert to ONNX]
+                    S2C[Generate TensorRT Engine]
+                    S2D[Test Inference Speed]
+                end
+                
+                subgraph "Step 3: Integration"
+                    S3A[Connect Camera]
+                    S3B[Test Pipeline]
+                    S3C[Add Sensors Optional]
+                    S3D[Launch Web Server]
+                end
+                
+                subgraph "Step 4: Optimization"
+                    S4A[Profile Performance]
+                    S4B[Adjust Resolution]
+                    S4C[Tune Parameters]
+                    S4D[Final Demo]
+                end
+                
+                S1A --> S1B --> S1C
+                S1C --> S2A
+                S2A --> S2B --> S2C --> S2D
+                S2D --> S3A
+                S3A --> S3B --> S3C --> S3D
+                S3D --> S4A
+                S4A --> S4B --> S4C --> S4D
+                
+                style S1A fill:#10b981
+                style S2C fill:#3b82f6
+                style S3D fill:#f59e0b
+                style S4D fill:#8b5cf6
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>9. Performance Targets & Testing</h2>
+        <div class="mermaid">
+            graph LR
+                subgraph "Input Options"
+                    IN1[Live Webcam]
+                    IN2[Video File<br/>test_livestock.mp4]
+                    IN3[Static Images<br/>For baseline]
+                end
+                
+                subgraph "Performance Metrics"
+                    PM1[Inference: 200-300ms]
+                    PM2[Total Pipeline: 300-400ms]
+                    PM3[FPS: 3-5]
+                    PM4[Memory: <2GB]
+                    PM5[GPU Util: 60-80%]
+                end
+                
+                subgraph "Test Scenarios"
+                    T1[Single Object]
+                    T2[Multiple Objects]
+                    T3[Occlusion Test]
+                    T4[24-hour Stability]
+                end
+                
+                IN1 --> PM1
+                IN2 --> PM2
+                PM2 --> PM3
+                PM3 --> T1
+                T1 --> T2
+                T2 --> T3
+                T3 --> T4
+                
+                style PM3 fill:#10b981
+                style T4 fill:#3b82f6
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Target Performance</th>
+                    <th>Actual (Expected)</th>
+                    <th>Optimization</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Camera Capture</td>
+                    <td>30 FPS</td>
+                    <td>30 FPS</td>
+                    <td>Hardware accelerated</td>
+                </tr>
+                <tr>
+                    <td>Preprocessing</td>
+                    <td><20ms</td>
+                    <td>10-15ms</td>
+                    <td>OpenCV optimized</td>
+                </tr>
+                <tr>
+                    <td>Model Inference</td>
+                    <td><300ms</td>
+                    <td>200-250ms</td>
+                    <td>TensorRT FP16</td>
+                </tr>
+                <tr>
+                    <td>Tracking</td>
+                    <td><20ms</td>
+                    <td>5-10ms</td>
+                    <td>Simple algorithm</td>
+                </tr>
+                <tr>
+                    <td>Total Pipeline</td>
+                    <td>3-5 FPS</td>
+                    <td>3-4 FPS</td>
+                    <td>Frame skipping</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h2>10. Optional Sensor Integration</h2>
+        <div class="module-card">
+            <h4>Basic Environmental Monitoring</h4>
+            <div class="mermaid">
+                flowchart LR
+                    subgraph "Sensors (Optional)"
+                        HC[HC-SR04<br/>Ultrasonic]
+                        DHT[DHT22<br/>Temp/Humidity]
+                    end
+                    
+                    subgraph "GPIO Interface"
+                        GPIO[Jetson.GPIO Library]
+                        READ[Sensor Reading<br/>1Hz Rate]
+                    end
+                    
+                    subgraph "Integration"
+                        JSON[JSON Format]
+                        WEB[Web Display]
+                    end
+                    
+                    HC --> GPIO
+                    DHT --> GPIO
+                    GPIO --> READ
+                    READ --> JSON
+                    JSON --> WEB
+                    
+                    style GPIO fill:#06b6d4
+                    style WEB fill:#10b981
+            </div>
+            
+            <div class="code-block">
+                GPIO Pins (Jetson Nano):
+                - HC-SR04: Pin 18 (Trigger), Pin 16 (Echo)
+                - DHT22: Pin 7 (Data)
+                - Power: 5V (Pin 2), GND (Pin 6)
+                - Simple threshold alerts (e.g., temp > 30°C)
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>11. Quick Start Guide</h2>
+        <div class="solution-box">
+            <h3>Setup Commands</h3>
+            <div class="code-block">
+# 1. Install dependencies
+sudo apt-get update
+sudo apt-get install python3-pip python3-opencv
+pip3 install flask torch torchvision onnx
+
+# 2. Download pretrained model
+# Visit Roboflow Universe → Search "livestock" → Download YOLOv5
+
+# 3. Convert to TensorRT
+python3 export.py --weights best.pt --include onnx
+trtexec --onnx=best.onnx --saveEngine=model.trt --fp16
+
+# 4. Run the system
+python3 main.py
+
+# 5. Access dashboard
+# Open browser: http://jetson_ip:5000
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>12. Lab Demo Scenarios</h2>
+        <div class="solution-box">
+            <strong>Demonstration Options:</strong>
+            <ul>
+                <li><strong>Scenario 1:</strong> Live detection with toy animals or printed images</li>
+                <li><strong>Scenario 2:</strong> Video playback of farm footage</li>
+                <li><strong>Scenario 3:</strong> Person detection as proxy for livestock</li>
+                <li><strong>Scenario 4:</strong> Multi-object tracking with common objects</li>
+            </ul>
+            
+            <strong>Key Demonstrations:</strong>
+            <ul>
+                <li>✓ Real-time inference on edge device</li>
+                <li>✓ Model optimization (FP32 vs FP16 comparison)</li>
+                <li>✓ Power consumption monitoring</li>
+                <li>✓ Web-based monitoring interface</li>
+                <li>✓ Basic tracking across frames</li>
+            </ul>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-value">2-3</div>
+                <div class="metric-label">Days to Deploy</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">$0</div>
+                <div class="metric-label">Additional Cost</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Jetson Nano</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">100%</div>
+                <div class="metric-label">Lab Feasible</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#60a5fa',
+                lineColor: '#60a5fa',
+                secondaryColor: '#8b5cf6',
+                tertiaryColor: '#06b6d4',
+                background: '#1e293b',
+                mainBkg: '#0f172a',
+                secondBkg: '#1e293b',
+                tertiaryBkg: '#334155',
+                primaryBorderColor: '#3b82f6',
+                secondaryBorderColor: '#8b5cf6',
+                tertiaryBorderColor: '#06b6d4',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '14px',
+                darkMode: true
+            }
+        });
+    </script>
+</body>
+</html>
+        <h2>8. Deployment Pipeline</h2>
+        <div class="mermaid">
+            flowchart TD
+                subgraph "Step 1: Environment Setup"
+                    S1A[Flash JetPack 4.6]
+                    S1B[Install Dependencies<br/>OpenCV, Flask, PyTorch]
+                    S1C[Configure CUDA]
+                end
+                
+                subgraph "Step 2: Model Preparation"
+                    S2A[Download from Roboflow]
+                    S2B[Convert to ONNX]
+                    S2C[Generate TensorRT Engine]
+                    S2D[Test Inference Speed]
+                end
+                
+                subgraph "Step 3: Integration"
+                    S3A[Connect Camera]
+                    S3B[Test Pipeline]
+                    S3C[Add Sensors Optional]
+                    S3D[Launch Web Server]
+                end
+                
+                subgraph "Step 4: Optimization"
+                    S4A[Profile Performance]
+                    S4B[Adjust Resolution]
+                    S4C[Tune Parameters]
+                    S4D[Final Demo]
+                end
+                
+                S1A --> S1B --> S1C
+                S1C --> S2A
+                S2A --> S2B --> S2C --> S2D
+                S2D --> S3A
+                S3A --> S3B --> S3C --> S3D
+                S3D --> S4A
+                S4A --> S4B --> S4C --> S4D
+                
+                style S1A fill:#10b981
+                style S2C fill:#3b82f6
+                style S3D fill:#f59e0b
+                style S4D fill:#8b5cf6
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>9. Performance Targets & Testing</h2>
+        <div class="mermaid">
+            graph LR
+                subgraph "Input Options"
+                    IN1[Live Webcam]
+                    IN2[Video File<br/>test_livestock.mp4]
+                    IN3[Static Images<br/>For baseline]
+                end
+                
+                subgraph "Performance Metrics"
+                    PM1[Inference: 200-300ms]
+                    PM2[Total Pipeline: 300-400ms]
+                    PM3[FPS: 3-5]
+                    PM4[Memory: <2GB]
+                    PM5[GPU Util: 60-80%]
+                end
+                
+                subgraph "Test Scenarios"
+                    T1[Single Object]
+                    T2[Multiple Objects]
+                    T3[Occlusion Test]
+                    T4[24-hour Stability]
+                end
+                
+                IN1 --> PM1
+                IN2 --> PM2
+                PM2 --> PM3
+                PM3 --> T1
+                T1 --> T2
+                T2 --> T3
+                T3 --> T4
+                
+                style PM3 fill:#10b981
+                style T4 fill:#3b82f6
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Target Performance</th>
+                    <th>Actual (Expected)</th>
+                    <th>Optimization</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Camera Capture</td>
+                    <td>30 FPS</td>
+                    <td>30 FPS</td>
+                    <td>Hardware accelerated</td>
+                </tr>
+                <tr>
+                    <td>Preprocessing</td>
+                    <td><20ms</td>
+                    <td>10-15ms</td>
+                    <td>OpenCV optimized</td>
+                </tr>
+                <tr>
+                    <td>Model Inference</td>
+                    <td><300ms</td>
+                    <td>200-250ms</td>
+                    <td>TensorRT FP16</td>
+                </tr>
+                <tr>
+                    <td>Tracking</td>
+                    <td><20ms</td>
+                    <td>5-10ms</td>
+                    <td>Simple algorithm</td>
+                </tr>
+                <tr>
+                    <td>Total Pipeline</td>
+                    <td>3-5 FPS</td>
+                    <td>3-4 FPS</td>
+                    <td>Frame skipping</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h2>10. Optional Sensor Integration</h2>
+        <div class="module-card">
+            <h4>Basic Environmental Monitoring</h4>
+            <div class="mermaid">
+                flowchart LR
+                    subgraph "Sensors (Optional)"
+                        HC[HC-SR04<br/>Ultrasonic]
+                        DHT[DHT22<br/>Temp/Humidity]
+                    end
+                    
+                    subgraph "GPIO Interface"
+                        GPIO[Jetson.GPIO Library]
+                        READ[Sensor Reading<br/>1Hz Rate]
+                    end
+                    
+                    subgraph "Integration"
+                        JSON[JSON Format]
+                        WEB[Web Display]
+                    end
+                    
+                    HC --> GPIO
+                    DHT --> GPIO
+                    GPIO --> READ
+                    READ --> JSON
+                    JSON --> WEB
+                    
+                    style GPIO fill:#06b6d4
+                    style WEB fill:#10b981
+            </div>
+            
+            <div class="code-block">
+                GPIO Pins (Jetson Nano):
+                - HC-SR04: Pin 18 (Trigger), Pin 16 (Echo)
+                - DHT22: Pin 7 (Data)
+                - Power: 5V (Pin 2), GND (Pin 6)
+                - Simple threshold alerts (e.g., temp > 30°C)
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>11. Quick Start Guide</h2>
+        <div class="solution-box">
+            <h3>Setup Commands</h3>
+            <div class="code-block">
+# 1. Install dependencies
+sudo apt-get update
+sudo apt-get install python3-pip python3-opencv
+pip3 install flask torch torchvision onnx
+
+# 2. Download pretrained model
+# Visit Roboflow Universe → Search "livestock" → Download YOLOv5
+
+# 3. Convert to TensorRT
+python3 export.py --weights best.pt --include onnx
+trtexec --onnx=best.onnx --saveEngine=model.trt --fp16
+
+# 4. Run the system
+python3 main.py
+
+# 5. Access dashboard
+# Open browser: http://jetson_ip:5000
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>12. Lab Demo Scenarios</h2>
+        <div class="solution-box">
+            <strong>Demonstration Options:</strong>
+            <ul>
+                <li><strong>Scenario 1:</strong> Live detection with toy animals or printed images</li>
+                <li><strong>Scenario 2:</strong> Video playback of farm footage</li>
+                <li><strong>Scenario 3:</strong> Person detection as proxy for livestock</li>
+                <li><strong>Scenario 4:</strong> Multi-object tracking with common objects</li>
+            </ul>
+            
+            <strong>Key Demonstrations:</strong>
+            <ul>
+                <li>✓ Real-time inference on edge device</li>
+                <li>✓ Model optimization (FP32 vs FP16 comparison)</li>
+                <li>✓ Power consumption monitoring</li>
+                <li>✓ Web-based monitoring interface</li>
+                <li>✓ Basic tracking across frames</li>
+            </ul>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-value">2-3</div>
+                <div class="metric-label">Days to Deploy</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">$0</div>
+                <div class="metric-label">Additional Cost</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Jetson Nano</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">100%</div>
+                <div class="metric-label">Lab Feasible</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#60a5fa',
+                lineColor: '#60a5fa',
+                secondaryColor: '#8b5cf6',
+                tertiaryColor: '#06b6d4',
+                background: '#1e293b',
+                mainBkg: '#0f172a',
+                secondBkg: '#1e293b',
+                tertiaryBkg: '#334155',
+                primaryBorderColor: '#3b82f6',
+                secondaryBorderColor: '#8b5cf6',
+                tertiaryBorderColor: '#06b6d4',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '14px',
+                darkMode: true
+            }
+        });
+    </script>
+</body>
+</html>
